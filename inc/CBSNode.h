@@ -56,8 +56,6 @@ public:
 	list<HLNode*> children;
 
 	// Meta-agents and ma_vec
-	vector<vector<int>> meta_agents;
-	vector<bool> ma_vec;
 	vector<uint64_t> ag_ll_node;
 
 	inline int getFVal() const { return g_val + h_val; }

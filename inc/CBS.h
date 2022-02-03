@@ -147,22 +147,12 @@ public:
 		suboptimality = w;
 	}
 	void setNodeLimit(int n) { node_limit = n; }
-	void setMergeThreshold(int b) { merge_th = b; }
-	void setMergeRestart(bool mr) { mr_active = mr; }
-	void setMASolver(shared_ptr<CBS> in_solver) { inner_solver = in_solver; }
-	void setMAVector(vector<bool> in_ma_vec) { ma_vec = in_ma_vec; }	
 	void setInitConstraints(int agent, ConstraintTable _table) {initial_constraints[agent].init(_table);}
 	void setInitSumLB (int _sum_lb) { init_sum_lb = _sum_lb; }
 	void setFlex(double val) {flex = val;}
 	void setTimeLimit(double tl) { time_limit = tl; }
 	void setIsStart(bool _st) { is_start = _st; }
 	void setIsSolver(bool s) {is_solver = s;}
-	void setMetaAgents(vector<int> in_ma)
-	{
-		meta_agents.clear();
-		for (const int& _ag_ : in_ma)
-			meta_agents.push_back(vector<int>({_ag_}));
-	}
 	void setMinFVal(int agent, int val)
 	{
 		if (min_f_vals.empty())
@@ -177,11 +167,9 @@ public:
 	}
 	virtual int getInitialPathLength(int agent) const {return (int) paths_found_initially[agent].size() - 1; }
 	int getminFVal(int agent) const { return min_f_vals[agent]; }
-	void setCleanupTh(int th) {cleanup_th = th;}
 	void setRestartTh(int th) {restart_th = th;}
 	void setUseFlex(bool _f) { use_flex = _f; }
 	void setRandomInit(bool _r) {random_init = _r;}
-	void setRootReplan(bool _r, bool _f_asc, bool _c_asc) {root_replan = _r; fmin_ascend = _f_asc; conf_ascend = _c_asc;}
 
 	////////////////////////////////////////////////////////////////////////////////////////////
 	// Runs the algorithm until the problem is solved or time is exhausted 
@@ -248,13 +236,8 @@ protected:
 	vector < SingleAgentSolver* > search_engines;  // used to find (single) agents' paths and mdd
 
 	// For nested framework
-	shared_ptr<CBS> inner_solver;  // inner (E)CBS for solving meta-agents
-	vector<vector<int>> meta_agents;
-	vector<bool> ma_vec;
-	vector<vector<int>> conflict_matrix;
 	bool is_solver = false;
-	bool mr_active = false;
-	bool is_start = false;  // This is for Merge and Restart
+	bool is_start = false;
 	int merge_th = INT_MAX;
 	int init_sum_lb = 0;  // Obtain from outer (E)CBS, the initial cost_lower bound
 	double flex = 0.0;  // flex for the meta-agent
@@ -269,44 +252,8 @@ protected:
 	bool conf_ascend;
 
 	// For CLEANUP node slection
-	int cleanup_th;
-	int node_cnt = 0;
 	int restart_th;
 	int restart_cnt = 0;
-
-	vector<int> findMetaAgent(int __ag__) const;
-	void printAllAgents(void) const;
-	bool shouldMerge(const vector<int>& __ma1__, const vector<int>& __ma2__, int mode=0) const;
-
-	template <typename T, typename S>
-    void sortMetaAgents(const vector<T>& first_based, bool first_ascend, const vector<S>& second_based=vector<S>(), bool second_ascend=true)
-	{
-		clock_t t = clock();
-		vector<int> pri_maid = sort_indexes(first_based, first_ascend, second_based, second_ascend);
-
-		vector<vector<int>> new_meta_agents;
-		for(size_t ma_id = 0; ma_id < meta_agents.size(); ma_id ++)
-			new_meta_agents.push_back(meta_agents[pri_maid[ma_id]]);
-
-		meta_agents = new_meta_agents;
-		runtime_sort_ma += (double)(clock() - t) / CLOCKS_PER_SEC;
-	}
-
-	template <typename T>
-    void sortMetaAgents(const vector<T>& sort_based, bool is_ascending)
-	{
-		assert(sort_based.size() == meta_agents.size());
-		clock_t t = clock();
-		vector<int> pri_maid = sort_indexes(sort_based, is_ascending);
-
-		vector<vector<int>> new_meta_agents;
-		for(size_t ma_id = 0; ma_id < meta_agents.size(); ma_id ++)
-			new_meta_agents.push_back(meta_agents[pri_maid[ma_id]]);
-
-		meta_agents = new_meta_agents;
-		runtime_sort_ma += (double)(clock() - t) / CLOCKS_PER_SEC;
-	}
-	// End nested framework
 
 	// For impact-based search
 	bool use_impact;

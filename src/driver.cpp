@@ -36,8 +36,7 @@ int main(int argc, char** argv)
 		("lowLevelSolver", po::value<bool>()->default_value(true), "using suboptimal solver in the low level")
 		("inadmissibleH", po::value<string>()->default_value("Global"), "inadmissible heuristics (Zero, Global, Path, Local, Conflict)")  // ECBS: Zero
 		("suboptimality", po::value<double>()->default_value(1.2), "suboptimality bound")
-		("cth", po::value<int>()->default_value(-1), "Threshold of non-increasing lowerbound in CLEANUP node slection")
-		("rth", po::value<int>()->default_value(50), "Threshold of when to restart FEECBS after visiting certain number of nodes from CLEANUP")
+		("rth", po::value<int>()->default_value(INT_MAX), "Threshold of when to restart FEECBS after visiting certain number of nodes from CLEANUP")
 
 		// params for CBS improvement
 		("heuristics", po::value<string>()->default_value("WDG"), "admissible heuristics for the high-level search (Zero, CG,DG, WDG)")  // ECBS: Zero
@@ -53,15 +52,11 @@ int main(int argc, char** argv)
 		("mergeTh,b", po::value<int>()->default_value(INT_MAX), "set merge threshold for nested framework")
 		("flex", po::value<bool>()->default_value(false), "set true to use FEECBS")
 		("randomInit", po::value<bool>()->default_value(true), "set true to use random ordering as initialization")
-		("rp", po::value<bool>()->default_value(false), "set true to use root replanning")
-		("fa", po::value<bool>()->default_value(false), "set true to sort agents at root in ascending fmin value")
-		("ca", po::value<bool>()->default_value(false), "set true to sort agents at root in ascending conflicts value")
-		("mr", po::value<bool>()->default_value(false), "set true to use the merage and restart technique")
 
 		// Statistic analysis
 		("saveCT", po::value<bool>()->default_value(false), "set true for plotting CT")
 		("nl", po::value<int>()->default_value(MAX_NODES), "Set node limit for timeout")
-		("lr", po::value<double>()->default_value(-1), "LL generated node limit ratio")
+		("lr", po::value<double>()->default_value(DBL_MAX), "LL generated node limit ratio")
 		;
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -170,49 +165,12 @@ int main(int argc, char** argv)
         ecbs.setSavingStats(vm["stats"].as<bool>());
         ecbs.setHighLevelSolver(s, vm["suboptimality"].as<double>());
 		ecbs.setUseFlex(vm["flex"].as<bool>());
-		ecbs.setRootReplan(vm["rp"].as<bool>(), vm["fa"].as<bool>(), vm["ca"].as<bool>());
 		ecbs.setRandomInit(vm["randomInit"].as<bool>());
-
-		if (vm["lr"].as<double>() > 0)
-		{
-			double node_limit_ratio = vm["lr"].as<double>();
-			ecbs.setLLNodeLimitRatio(node_limit_ratio);
-		}
+		ecbs.setLLNodeLimitRatio(vm["lr"].as<double>());
+		ecbs.setRestartTh(vm["rth"].as<int>());
 
 		if (vm["nl"].as<int>() < MAX_NODES)
 			ecbs.setNodeLimit(vm["nl"].as<int>());
-
-        //////////////////////////////////////////////////////////////////////
-		// inner solver for nested framework
-		if (vm["mergeTh"].as<int>() < INT_MAX)
-		{
-			shared_ptr<CBS> inner_solver = make_shared<ECBS>(ECBS(instance, false, vm["screen"].as<int>()));
-			inner_solver->setIsSolver(true);
-			inner_solver->setPrioritizeConflicts(vm["prioritizingConflicts"].as<bool>());
-			inner_solver->setDisjointSplitting(vm["disjointSplitting"].as<bool>());
-			inner_solver->setBypass(vm["bypass"].as<bool>());
-			inner_solver->setRectangleReasoning(vm["rectangleReasoning"].as<bool>());
-			inner_solver->setCorridorReasoning(vm["corridorReasoning"].as<bool>());
-			inner_solver->setHeuristicType(h, h_hat);
-			inner_solver->setTargetReasoning(vm["targetReasoning"].as<bool>());
-			inner_solver->setMutexReasoning(false);
-			inner_solver->setConflictSelectionRule(conflict);
-			inner_solver->setNodeSelectionRule(n);
-			inner_solver->setSavingStats(vm["stats"].as<bool>());
-			inner_solver->setHighLevelSolver(s, vm["suboptimality"].as<double>());
-			inner_solver->setUseFlex(vm["flex"].as<bool>());
-			inner_solver->setRootReplan(vm["rp"].as<bool>(), vm["fa"].as<bool>(), vm["ca"].as<bool>());
-			inner_solver->setRandomInit(vm["randomInit"].as<bool>());
-
-			ecbs.setMASolver(inner_solver);
-			ecbs.setMergeThreshold(vm["mergeTh"].as<int>());
-			if (vm["mr"].as<bool>())
-				ecbs.setMergeRestart(vm["mr"].as<bool>());
-		}
-		if (vm["cth"].as<int>() -1)
-			ecbs.setCleanupTh(vm["cth"].as<int>());
-		if (vm["rth"].as<int>() -1)
-			ecbs.setRestartTh(vm["rth"].as<int>());
 
         //////////////////////////////////////////////////////////////////////
         // run

@@ -107,7 +107,6 @@ private:
 	bool generateChild(ECBSNode* child, ECBSNode* curr, int child_idx=0);
 	bool generateRoot();
 	bool findPathForSingleAgent(ECBSNode*  node, int ag);
-	bool findPathForMetaAgent(ECBSNode* node, const vector<int>& meta_ag);
 	void classifyConflicts(ECBSNode &node);
 	void computeConflictPriority(shared_ptr<Conflict>& con, ECBSNode& node);
 

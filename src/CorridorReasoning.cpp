@@ -2,7 +2,6 @@
 #include "Conflict.h"
 #include <memory>
 #include "SpaceTimeAStar.h"
-#include "SIPP.h"
 
 shared_ptr<Conflict> CorridorReasoning::run(const shared_ptr<Conflict>& conflict,
 	const vector<Path*>& paths, const HLNode& node)

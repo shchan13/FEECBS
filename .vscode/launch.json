@@ -8,7 +8,7 @@
             "name": "(gdb) (F)EECBS",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/eecbs",
+            "program": "${workspaceFolder}/build/feecbs",
             "args": [
                 // "-m/home/rdaneel/mapf_benchmark/mapf-map/Berlin_1_256.map",
                 // "-a/home/rdaneel/mapf_benchmark/scen-even/Berlin_1_256-even-17.scen", 
@@ -18,18 +18,18 @@
                 // "-a/home/rdaneel/mapf_benchmark/scen-even/brc202d-even-13.scen",
                 // "-m/home/rdaneel/mapf_benchmark/mapf-map/empty-32-32.map",
                 // "-a/home/rdaneel/mapf_benchmark/scen-even/empty-32-32-even-1.scen",
-                "-m/home/rdaneel/mapf_benchmark/mapf-map/maze-32-32-2.map",
-                "-a/home/rdaneel/mapf_benchmark/scen-even/maze-32-32-2-even-3.scen",
+                // "-m/home/rdaneel/mapf_benchmark/mapf-map/maze-32-32-2.map",
+                // "-a/home/rdaneel/mapf_benchmark/scen-even/maze-32-32-2-even-3.scen",
                 // "-m/home/rdaneel/mapf_benchmark/mapf-map/random-32-32-20.map",
-                // "-a/home/rdaneel/mapf_benchmark/scen-random/random-32-32-20-random-25.scen", 
-                // "-m/home/rdaneel/mapf_benchmark/mapf-map/den520d.map", 
-                // "-a/home/rdaneel/mapf_benchmark/scen-even/den520d-even-16.scen", 
+                // "-a/home/rdaneel/mapf_benchmark/scen-random/random-32-32-20-random-5.scen", 
+                "-m/home/rdaneel/mapf_benchmark/mapf-map/den520d.map", 
+                "-a/home/rdaneel/mapf_benchmark/scen-even/den520d-even-16.scen", 
                 // "-m/home/rdaneel/mapf_benchmark/mapf-map/warehouse-20-40-10-2-1.map",
                 // "-a/home/rdaneel/mapf_benchmark/scen-even/warehouse-20-40-10-2-1-even-25.scen", 
                 "-o${workspaceFolder}/result_debug.csv", 
-                "-k40",
+                "-k100",
                 "-t10",
-                "-s1",
+                "-s2",
                 "--highLevelSolver", "EES",
                 "--suboptimality","1.05",
                 "--heuristics", "WDG",
@@ -38,9 +38,9 @@
                 "--rectangleReasoning", "true",
                 "--corridorReasoning", "true",
                 "--targetReasoning", "true",
-                "--rth", "-1",
+                "--rth", "50",  // Threshold of when to restart FEECBS with EECBS after continuously visiting certain number of nodes from CLEANUP
                 "--flex", "true",
-                "--saveCT", "true",
+                // "--saveCT", "true",
                 // "--lr", "100"
             ],
             "stopAtEntry": false,
@@ -60,7 +60,7 @@
             "name": "(gdb) (F)ECBS",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/eecbs",
+            "program": "${workspaceFolder}/build/feecbs",
             "args": [
                 "-m/home/rdaneel/mapf_benchmark/mapf-map/random-32-32-20.map",
                 "-a/home/rdaneel/mapf_benchmark/scen-even/random-32-32-20-even-22.scen", 
@@ -102,67 +102,11 @@
             ]
         },
         {
-            "name": "(gdb) NEECBS",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/eecbs",
-            "args": [
-                "-m/home/rdaneel/mapf_benchmark/mapf-map/random-32-32-20.map",
-                "-a/home/rdaneel/mapf_benchmark/scen-even/random-32-32-20-even-4.scen", //22
-                // "-m/home/rdaneel/mapf_benchmark/mapf-map/den520d.map", 
-                // "-a/home/rdaneel/mapf_benchmark/scen-even/den520d-even-2.scen",
-                "-k90",
-                "-o${workspaceFolder}/result_debug.csv", 
-                "-t300",
-                "-b", "1",
-                // "--nl", "349",
-                "--highLevelSolver", "A*eps",
-                "--inadmissibleH", "Zero",
-                "--heuristics", "Zero",
-                "--suboptimality","1.05",
-                // "--flex", "true",
-                "--prioritizingConflicts", "false",
-                "--bypass", "true",
-                "--rectangleReasoning", "false",
-                "--corridorReasoning", "false",
-                "--targetReasoning", "false",
-                "-s1"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ]
-        },
-        {
             "name": "Python: data_processor",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/script/data_processor.py",
-            // "program": "${workspaceFolder}/script/plot_ins_upperbound.py",
             "args": ["--config", "${workspaceFolder}/script/config.yaml"],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "Python: plot_suboptimality",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/script/plot_suboptimality.py",
-            "args": ["--config", "${workspaceFolder}/script/new_config.yaml"],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "Python: plot_instances",
-            "type": "python",
-            "request": "launch",
-            // "program": "${workspaceFolder}/script/plot_nodes_in_lists.py",
-            "program": "${workspaceFolder}/script/plot_iter.py",
             "console": "integratedTerminal"
         }
     ]

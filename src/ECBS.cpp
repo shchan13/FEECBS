@@ -14,7 +14,7 @@ bool ECBS::solve(double time_limit, int _cost_lowerbound, int _cost_upperbound)
 		cout << name << ": ";
 	}
 
-	if (!is_start)  // set timer
+	if (!is_start)  // set timer for restart with EECBS
 	{
 		is_start = true;
 		start = clock();
@@ -62,13 +62,10 @@ bool ECBS::solve(double time_limit, int _cost_lowerbound, int _cost_upperbound)
 			iter_subopt->push_back((double) curr->sum_of_costs / (double) cleanup_head_lb);
 			iter_sum_ll_generate->push_back(curr->ll_generated);
 
-			for (const vector<int>& ma : meta_agents)
+			for (int ag = 0; ag < num_of_agents; ag++)
 			{
-				for (const int& ag : ma)
-				{
-					iter_ag_lb->at(ag).push_back(min_f_vals[ag]);
-					iter_ag_cost->at(ag).push_back(paths[ag]->size()-1);
-				}
+				iter_ag_lb->at(ag).push_back(min_f_vals[ag]);
+				iter_ag_cost->at(ag).push_back(paths[ag]->size()-1);
 			}
 			
 			if (screen == 5)  // Debug
@@ -92,7 +89,7 @@ bool ECBS::solve(double time_limit, int _cost_lowerbound, int _cost_upperbound)
 		if (use_flex && curr->chosen_from == "cleanup")  // Early replanning for FEECBS
 		{
 			restart_cnt ++;
-			if (restart_cnt > restart_th && restart_th > -1)
+			if (restart_cnt > restart_th)
 			{
 				restart = true;
 				break;
@@ -132,24 +129,7 @@ bool ECBS::solve(double time_limit, int _cost_lowerbound, int _cost_upperbound)
 				foundBypass = false;
 				ECBSNode* child[2] = { new ECBSNode() , new ECBSNode() };
 
-				// if (screen == 3)
-				// 	debugChooseConflict(*curr);
-				curr->conflict = chooseConflict(*curr);  // TODO: choose conflict that is between two meta_agents
-
-				// update conflict_matrix and joint meta_agent
-				vector<int> ma1 = findMetaAgent(curr->conflict->a1);
-				vector<int> ma2 = findMetaAgent(curr->conflict->a2);
-				assert(ma1 != ma2);
-
-				for (const int& a1 : ma1)
-				{
-					for (const int& a2 : ma2)
-					{
-						conflict_matrix[a1][a2] += 1;
-						conflict_matrix[a2][a1] += 1;
-					}
-				}
-
+				curr->conflict = chooseConflict(*curr);
 				addConstraints(curr, child[0], child[1]);
 				if (screen > 1)
 					cout << "	Expand " << *curr << endl << 	"	on " << *(curr->conflict) << endl;
@@ -189,8 +169,7 @@ bool ECBS::solve(double time_limit, int _cost_lowerbound, int _cost_upperbound)
 								//// path.second.second: lower bound of the path
 								if ((double)path.second.first.size()-1 > suboptimality * fmin_copy[path.first])
 								{
-									// bypassing for EECBS
-									foundBypass = false;
+									foundBypass = false;  // bypassing for EECBS
 									break;
 								}
 							}
@@ -253,21 +232,6 @@ bool ECBS::solve(double time_limit, int _cost_lowerbound, int _cost_upperbound)
 		{
 			ECBSNode* child[2] = { new ECBSNode() , new ECBSNode() };
 			curr->conflict = chooseConflict(*curr);
-
-			// update conflict_matrix and joint meta_agent
-			vector<int> ma1 = findMetaAgent(curr->conflict->a1);
-			vector<int> ma2 = findMetaAgent(curr->conflict->a2);
-			assert(ma1 != ma2);
-
-			for (const int& a1 : ma1)
-			{
-				for (const int& a2 : ma2)
-				{
-					conflict_matrix[a1][a2] += 1;
-					conflict_matrix[a2][a1] += 1;
-				}
-			}
-
 			
 			addConstraints(curr, child[0], child[1]);
 
@@ -346,9 +310,7 @@ bool ECBS::solve(double time_limit, int _cost_lowerbound, int _cost_upperbound)
 	runtime = (double)(clock() - start) / CLOCKS_PER_SEC;
 	if (restart && runtime < time_limit)
 	{
-		vector<pair<Path,int>> backup_initial_paths = paths_found_initially;  // We do not want to clear initial paths
 		clear();
-
 		assert(use_flex);
 		use_flex = false;
 		srand(0);
@@ -429,41 +391,25 @@ void ECBS::updatePaths(ECBSNode* curr)
 
 bool ECBS::generateRoot()
 {
-	if (meta_agents.empty())  // initialize for outer ECBS
-	{
-		for (int ag = 0; ag < num_of_agents; ag ++)
-		{
-			meta_agents.push_back(vector<int>({ag}));
-			ma_vec[ag] = true;
-		}
-	}
-
 	paths.resize(num_of_agents, nullptr);
 	init_min_f_vals.resize(num_of_agents);  // This is for debug
 	mdd_helper.init(num_of_agents);
 	heuristic_helper.init();
 
-	// initialize paths_found_initially
+	// initialize paths_found_initially and min_f_vals
 	paths_found_initially.clear();
 	paths_found_initially.resize(num_of_agents);
 	min_f_vals.clear();
 	min_f_vals.resize(num_of_agents);
 
-	int initial_g_val = 0;
-	int initial_soc = 0;
-
-	std::random_shuffle(meta_agents.begin(), meta_agents.end());  // generate random permutation of agent indices
-
 	auto root = new ECBSNode();
 	root->g_val = 0;
 	root->sum_of_costs = 0;
-	root->meta_agents = meta_agents;
-	root->ma_vec = ma_vec;
 	root->ag_ll_node = vector<uint64_t>(num_of_agents, 0);
 
-	for (const vector<int>& ma : meta_agents)
+	auto agents = shuffleAgents();  //generate random permuattion of agent indices
+	for (const int& ag : agents)
 	{
-		int ag = ma.front();
 		paths_found_initially[ag] = search_engines[ag]->findSuboptimalPath(*root, initial_constraints[ag], paths, ag, 0, suboptimality);
 		if (paths_found_initially[ag].first.empty())
 		{
@@ -484,6 +430,7 @@ bool ECBS::generateRoot()
 
 	root->h_val = 0;
 	root->depth = 0;
+	findConflicts(*root);
     heuristic_helper.computeQuickHeuristics(*root);
 	pushNode(root);
 	dummy_start = root;
@@ -504,8 +451,6 @@ bool ECBS::generateChild(ECBSNode*  node, ECBSNode* parent, int child_idx)
 	node->h_val = parent->h_val;
 	node->sum_of_costs = parent->sum_of_costs;
 	node->makespan = parent->makespan;
-	node->meta_agents = parent->meta_agents;
-	node->ma_vec = parent->ma_vec;
 	node->ag_ll_node = parent->ag_ll_node;
 	node->depth = parent->depth + 1;
 	auto agents = getInvalidAgents(node->constraints);
@@ -957,11 +902,8 @@ void ECBS::classifyConflicts(ECBSNode &node)
 		    (int)paths[a2]->size() - 1 == min_f_vals[a2] &&
             min_f_vals[a1] > timestep &&  //conflict happens before both agents reach their goal locations
 			min_f_vals[a2] > timestep &&
-			findMetaAgent(a1).size() == 1 &&
-			findMetaAgent(a2).size() == 1 &&
 			type == constraint_type::VERTEX) // vertex conflict
 		{
-			// TODO: memorize the conflicts location for meta-agent to view it as vertex conflict
 			auto mdd1 = mdd_helper.getMDD(node, a1, paths[a1]->size());
 			auto mdd2 = mdd_helper.getMDD(node, a2, paths[a2]->size());
 			auto rectangle = rectangle_helper.run(paths, timestep, a1, a2, mdd1, mdd2);
@@ -993,13 +935,13 @@ void ECBS::computeConflictPriority(shared_ptr<Conflict>& con, ECBSNode& node)
 	MDD *mdd1 = nullptr, *mdd2 = nullptr;
 	if (timestep >= (int)paths[a1]->size())
 		cardinal1 = true;
-	else //if (!paths[a1]->at(0).is_single())
+	else
 	{
 		mdd1 = mdd_helper.getMDD(node, a1, paths[a1]->size());
 	}
 	if (timestep >= (int)paths[a2]->size())
 		cardinal2 = true;
-	else //if (!paths[a2]->at(0).is_single())
+	else
 	{
 		mdd2 = mdd_helper.getMDD(node, a2, paths[a2]->size());
 	}
@@ -1072,12 +1014,4 @@ void ECBS::clear()
     goal_node = nullptr;
     solution_found = false;
     solution_cost = -2;
-
-	// for nested framework
-	meta_agents.clear();
-	ma_vec.clear();
-	ma_vec.resize(num_of_agents, false);  // checking if need to solve agent
-
-	conflict_matrix.clear();
-	conflict_matrix.resize(num_of_agents, vector<int>(num_of_agents, 0));
 }

@@ -257,7 +257,8 @@ inline void SpaceTimeAStar::pushNode(AStarNode* node)
 	node->in_openlist = true;
 	num_generated++;
 
-	if (num_generated > nl_ratio*node_limit && nl_ratio > 0 && w > 1 && upperbound > w * min_f_val)
+	assert(nl_ratio >= 0);
+	if (num_generated > nl_ratio*node_limit && w > 1 && upperbound > w * min_f_val)
 		use_focal = false;
 	else if (node->getFVal() <= upperbound)
 		node->focal_handle = focal_list.push(node);		

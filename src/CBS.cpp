@@ -2,7 +2,6 @@
 #include <random>      // std::default_random_engine
 #include <chrono>       // std::chrono::system_clock
 #include "CBS.h"
-#include "SIPP.h"
 #include "SpaceTimeAStar.h"
 
 
@@ -166,23 +165,7 @@ void CBS::findConflicts(HLNode& curr)
 			{
 				findConflicts(curr, a1, a2);
 			}
-		}
-
-		// vector<bool> detected(num_of_agents, false);
-		// for (int a1 = 0; a1 < num_of_agents; a1++)
-		// {
-		// 	detected[a1] = true;
-		// 	if (ma_vec[a1])
-		// 	{
-		// 		for (int a2 = 0; a2 < num_of_agents; a2 ++)
-		// 		{
-		// 			if (ma_vec[a2] && !detected[a2] && findMetaAgent(a1) != findMetaAgent(a2))
-		// 				findConflicts(curr, a1, a2);
-		// 			else
-		// 				continue;
-		// 		}
-		// 	}
-		// }			
+		}		
 	}
 	runtime_detect_conflicts += (double)(clock() - t) / CLOCKS_PER_SEC;
 }
@@ -200,28 +183,6 @@ shared_ptr<Conflict> CBS::chooseConflict(const HLNode &node) const
 		choose = node.conflicts.back();
 		for (const auto& conflict : node.conflicts)
 		{
-			// if (screen == 3 && conflict->priority == choose->priority && conflict->type == choose->type &&
-			// 	conflict->secondary_priority == choose->secondary_priority && max(choose->impacts[0].count, choose->impacts[1].count) != 0)
-			// {
-			// 	cout << "===============================================================" << endl;
-			// 	cout << "choose  : ";
-			// 	cout << "count:" << max(choose->impacts[0].count, choose->impacts[1].count) << "|";
-			// 	cout << "FLEX:" << max(choose->getImpactVal(0, impact_type::FLEX), choose->getImpactVal(1, impact_type::FLEX)) << "|";
-			// 	cout << "LB:" << max(choose->getImpactVal(0, impact_type::LB), choose->getImpactVal(1, impact_type::LB)) << "|";
-			// 	cout << "REDUCE:" << max(choose->getImpactVal(0, impact_type::REDUCED_CONFLICTS), choose->getImpactVal(1, impact_type::REDUCED_CONFLICTS)) << endl;
-			// 	cout << "	" << *choose << endl;
-
-			// 	cout << "conflict: ";
-			// 	cout << "count:" << max(conflict->impacts[0].count, conflict->impacts[1].count) << "|";
-			// 	cout << "FLEX:" << max(conflict->getImpactVal(0, impact_type::FLEX), conflict->getImpactVal(1, impact_type::FLEX)) << "|";
-			// 	cout << "LB:" << max(conflict->getImpactVal(0, impact_type::LB), conflict->getImpactVal(1, impact_type::LB)) << "|";
-			// 	cout << "REDUCE:" << max(conflict->getImpactVal(0, impact_type::REDUCED_CONFLICTS), conflict->getImpactVal(1, impact_type::REDUCED_CONFLICTS)) << endl;
-			// 	cout << "	" << *conflict << endl;
-			// 	cout << "===============================================================" << endl;
-			// 	cout << "*choose < *conflict? " << (*choose < *conflict) << endl;
-			// 	cout << endl;
-			// }
-
 			if (*choose < *conflict)
 				choose = conflict;
 		}
@@ -1240,9 +1201,8 @@ void CBS::savePaths(const string &fileName) const
 vector<Path> CBS::getPath(void) const
 {
 	vector<Path> output_paths(num_of_agents);
-	for (const vector<int>& ma : meta_agents)
-		for (const int& ag : ma)
-			output_paths[ag] = Path(*paths[ag]);
+	for (int ag = 0; ag < num_of_agents; ag++)
+		output_paths[ag] = Path(*paths[ag]);
 	return output_paths;
 }
 
@@ -1773,46 +1733,6 @@ void CBS::addConstraints(const HLNode* curr, HLNode* child1, HLNode* child2) con
 	{
 		child1->constraints = curr->conflict->constraint1;
 		child2->constraints = curr->conflict->constraint2;
-
-		// vector<int> conf_ma1 = findMetaAgent(curr->conflict->a1);
-		// if (conf_ma1.size() == 1)
-		// {
-		// 	child1->constraints = curr->conflict->constraint1;
-		// }
-		// else
-		// {
-		// 	constraint_type type;
-		// 	if (curr->conflict->loc2 == -1)  // Meta-agent vertex constraint
-		// 		type = constraint_type::VERTEX;
-		// 	else  // Meta-agent edge constraint
-		// 		type = constraint_type::EDGE;
-
-		// 	for (const int& _ag_ : conf_ma1)
-		// 	{
-		// 		child1->constraints.emplace_back(_ag_, curr->conflict->loc1, curr->conflict->loc2, 
-		// 			curr->conflict->timestep, type);
-		// 	}
-		// }
-
-		// vector<int> conf_ma2 = findMetaAgent(curr->conflict->a2);
-		// if (conf_ma2.size() == 1)
-		// {
-		// 	child2->constraints = curr->conflict->constraint2;
-		// }
-		// else
-		// {
-		// 	constraint_type type;
-		// 	if (curr->conflict->loc2 == -1)  // Meta-agent vertex constraint
-		// 		type = constraint_type::VERTEX;
-		// 	else  // Meta-agent edge constraint
-		// 		type = constraint_type::EDGE;
-
-		// 	for (const int& _ag_ : conf_ma2)
-		// 	{
-		// 		child2->constraints.emplace_back(_ag_, curr->conflict->loc1, curr->conflict->loc2, 
-		// 			curr->conflict->timestep, type);
-		// 	}
-		// }
 	}
 }
 
@@ -1849,11 +1769,7 @@ CBS::CBS(const Instance& instance, bool sipp, int screen) :
 	search_engines.resize(num_of_agents);
 	for (int i = 0; i < num_of_agents; i++)
 	{
-		if (sipp)
-			search_engines[i] = new SIPP(instance, i);
-		else
-			search_engines[i] = new SpaceTimeAStar(instance, i);
-
+		search_engines[i] = new SpaceTimeAStar(instance, i);
 		initial_constraints[i].goal_location = search_engines[i]->goal_location;
 	}
 	runtime_preprocessing = (double)(clock() - t) / CLOCKS_PER_SEC;
@@ -1864,10 +1780,6 @@ CBS::CBS(const Instance& instance, bool sipp, int screen) :
 	{
 		instance.printAgents();
 	}
-
-	// Initialize for nested framework
-	ma_vec.resize(num_of_agents, false);  // checking if need to solve agent
-	conflict_matrix.resize(num_of_agents, vector<int>(num_of_agents, 0));
 }
 
 
@@ -1967,7 +1879,6 @@ inline void CBS::releaseNodes()
 		delete node;
 	allNodes_table.clear();
 	path_initialize = false;
-	conflict_matrix.resize(num_of_agents, vector<int>(num_of_agents, 0));
 }
 
 
@@ -2078,6 +1989,7 @@ void CBS::clear()
 	solution_cost = -2;
 }
 
+
 void CBS::getBranchEval(HLNode* __node__, int open_head_lb)
 {
 	assert(br_sum_lb->empty());
@@ -2160,59 +2072,6 @@ void CBS::getBranchEval(HLNode* __node__, int open_head_lb)
 	return;
 }
 
-bool CBS::shouldMerge(const vector<int>& __ma1__, const vector<int>& __ma2__, int mode) const
-{
-	bool should_merge = false;
-	int counter = 0;
-	switch (mode)
-	{
-	case 0:
-		for (const int& __a1__ : __ma1__)
-			for (const int& __a2__ : __ma2__)
-				counter += conflict_matrix[__a1__][__a2__];
-		if (counter > merge_th)
-			should_merge = true;
-		break;
-	
-	default:
-		break;
-	}
-	return should_merge;
-}
-
-vector<int> CBS::findMetaAgent(int __ag__) const
-{
-	vector<int> out_list;
-	if (ma_vec[__ag__])
-	{
-		for (const auto& __ma__: meta_agents)
-		{
-			if (std::find(__ma__.begin(), __ma__.end(), __ag__) != __ma__.end())
-			{
-				out_list = __ma__;
-				break;
-			}
-		}
-		
-		if (out_list.size() == 0)
-		{
-			cout << "No such meta_agent!!!" << endl;
-			exit(1);
-		}
-	}
-	return out_list;
-}
-
-void CBS::printAllAgents(void) const
-{
-	for (const vector<int>& _ma_ : meta_agents)
-	{
-		for (const int& _ag_ : _ma_)
-			cout << _ag_ << ", ";
-		cout << "|";
-	}
-	cout << endl;
-}
 
 bool CBS::compareConflicts(shared_ptr<Conflict> conflict1, shared_ptr<Conflict> conflict2)
 {

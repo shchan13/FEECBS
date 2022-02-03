@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "float.h"
 #include "Instance.h"
 #include "ConstraintTable.h"
 
@@ -124,10 +125,9 @@ public:
 
 protected:
 	int min_f_val; // minimal f value in OPEN
-	// int lower_bound; // Threshold for FOCAL
 	double w = 1; // suboptimal bound
-	uint64_t node_limit;  // If the number of generated LL node > nl_ratio * node_limit, then switch to A*, 1e6
-	double nl_ratio = -1;
+	uint64_t node_limit = UINT64_MAX;  // If the number of generated LL node > nl_ratio * node_limit, then switch to A*, 1e6
+	double nl_ratio = DBL_MAX;
 
 	void compute_heuristics();
 	int get_DH_heuristic(int from, int to) const { return abs(my_heuristic[from] - my_heuristic[to]); }
