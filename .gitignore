@@ -1,0 +1,11 @@
+.idea
+cmake-*
+build
+result_debug.csv
+togo_data*
+iteration_data*
+result_debug*
+config
+nodes_in_list*
+*.mp4
+*.png

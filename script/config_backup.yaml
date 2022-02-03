@@ -1,0 +1,123 @@
+exp_path: "/home/rdaneel/my_exp_aaai2_60sec/"
+ins_num: 25
+time_limit: 60
+
+maps:
+  - name: Berlin_1_256
+    label: city
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 200
+      - 400
+      - 600
+      - 800
+
+  - name: den520d
+    label: den520d
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 200
+      - 400
+      - 600
+      - 800
+
+  - name: brc202d
+    label: brc202d
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 200
+      - 400
+      - 600
+      - 800
+
+  - name: warehouse-20-40-10-2-1
+    label: warehouse
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 200
+      - 400
+      - 600
+      - 800
+
+  - name: maze-32-32-2
+    label: maze
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 10
+      - 20
+      - 30
+      - 40
+      - 50
+
+  - name: room-32-32-4
+    label: room
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 10
+      - 20
+      - 30
+      - 40
+      - 50
+
+  - name: random-32-32-20
+    label: random
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 20
+      - 40
+      - 60
+      - 80
+      - 100
+
+  - name: empty-32-32
+    label: empty
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 50
+      - 100
+      - 150
+      - 200
+
+solvers:
+  # - name: FEECBS10
+  #   label: FEECBS+ FR(50)
+  #   color: 'orange'
+  #   marker: 's'
+  #   w: 1.01
+  #   mth: -1
+  #   T_N: 50
+  #   T_i: -1
+
+  # - name: FEECBS1a
+  #   label: FEECBS+ old FR(50)
+  #   color: 'pink'
+  #   marker: 'o'
+  #   w: 1.01
+  #   mth: -1
+  #   T_N: 50
+  #   T_i: -1
+  
+  - name: FEECBS10
+    label: FEECBS+ (FR)
+    color: 'purple'
+    marker: '>'
+    w: 1.01
+    mth: -1
+    T_N: 50
+    T_i: -1
