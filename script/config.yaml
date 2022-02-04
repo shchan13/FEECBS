@@ -1,7 +1,13 @@
 exp_path: "/home/rdaneel/exp_aaai/"
 ins_num: 25
 time_limit: 60
-plot_ci: true
+plot_ci: false
+
+f_weights:
+  - 1.01
+  - 1.02
+  - 1.05
+  - 1.10
 
 maps:
   - name: Berlin_1_256
@@ -15,16 +21,16 @@ maps:
       - 600
       - 800
 
-  # - name: den520d
-  #   label: den520d
-  #   scens:
-  #     - even
-  #     - random
-  #   num_of_agents:
-  #     - 200
-  #     - 400
-  #     - 600
-  #     - 800
+  - name: den520d
+    label: den520d
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 200
+      - 400
+      - 600
+      - 800
 
   - name: brc202d
     label: brc202d
@@ -48,62 +54,63 @@ maps:
       - 600
       - 800
 
-  # - name: maze-32-32-2
-  #   label: maze
-  #   scens:
-  #     - even
-  #     - random
-  #   num_of_agents:
-  #     - 10
-  #     - 20
-  #     - 30
-  #     - 40
-  #     - 50
+  - name: maze-32-32-2
+    label: maze
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 10
+      - 20
+      - 30
+      - 40
+      - 50
 
-  # - name: room-32-32-4
-  #   label: room
-  #   scens:
-  #     - even
-  #     - random
-  #   num_of_agents:
-  #     - 10
-  #     - 20
-  #     - 30
-  #     - 40
-  #     - 50
+  - name: room-32-32-4
+    label: room
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 10
+      - 20
+      - 30
+      - 40
+      - 50
 
-  # - name: random-32-32-20
-  #   label: random
-  #   scens:
-  #     - even
-  #     - random
-  #   num_of_agents:
-  #     - 20
-  #     - 40
-  #     - 60
-  #     - 80
-  #     - 100
+  - name: random-32-32-20
+    label: random
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 20
+      - 40
+      - 60
+      - 80
+      - 100
 
-  # - name: empty-32-32
-  #   label: empty
-  #   scens:
-  #     - even
-  #     - random
-  #   num_of_agents:
-  #     - 50
-  #     - 100
-  #     - 150
-  #     - 200
+  - name: empty-32-32
+    label: empty
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 100
+      - 200
+      - 300
+      - 400
+      - 500
 
 solvers:
-  # - name: EECBS0
-  #   label: 'EECBS+'
-  #   color: 'grey'
-  #   marker: '+'
-  #   w: 1.02
-  #   mtth: -1
-  #   T_N: -1
-  #   T_i: -1
+  - name: EECBS0
+    label: 'EECBS+'
+    color: 'grey'
+    marker: '+'
+    w: 1.02
+    mtth: -1
+    T_N: -1
+    T_i: -1
   
   # - name: EECBS1
   #   label: 'EECBS+ FA*(10)'
@@ -179,7 +186,7 @@ solvers:
  
   - name: FEECBS6
     label: 'FEECBS+ FA*(10)'
-    color: 'yellow'
+    color: 'gold'
     marker: '|'
     w: 1.02
     mth: -1
