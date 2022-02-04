@@ -36,6 +36,7 @@ int main(int argc, char** argv)
 		("lowLevelSolver", po::value<bool>()->default_value(true), "using suboptimal solver in the low level")
 		("inadmissibleH", po::value<string>()->default_value("Global"), "inadmissible heuristics (Zero, Global, Path, Local, Conflict)")  // ECBS: Zero
 		("suboptimality", po::value<double>()->default_value(1.2), "suboptimality bound")
+		("flex", po::value<bool>()->default_value(false), "Set true to use flex distribution")
 		("rth", po::value<int>()->default_value(INT_MAX), "Threshold of when to restart FEECBS after visiting certain number of nodes from CLEANUP")
 
 		// params for CBS improvement
@@ -48,11 +49,6 @@ int main(int argc, char** argv)
 		("targetReasoning", po::value<bool>()->default_value(true), "target reasoning")  // false
 		("restart", po::value<int>()->default_value(0), "rapid random restart times")
 		
-		// params for NFEECBS
-		("mergeTh,b", po::value<int>()->default_value(INT_MAX), "set merge threshold for nested framework")
-		("flex", po::value<bool>()->default_value(false), "set true to use FEECBS")
-		("randomInit", po::value<bool>()->default_value(true), "set true to use random ordering as initialization")
-
 		// Statistic analysis
 		("saveCT", po::value<bool>()->default_value(false), "set true for plotting CT")
 		("nl", po::value<int>()->default_value(MAX_NODES), "Set node limit for timeout")
@@ -165,7 +161,6 @@ int main(int argc, char** argv)
         ecbs.setSavingStats(vm["stats"].as<bool>());
         ecbs.setHighLevelSolver(s, vm["suboptimality"].as<double>());
 		ecbs.setUseFlex(vm["flex"].as<bool>());
-		ecbs.setRandomInit(vm["randomInit"].as<bool>());
 		ecbs.setLLNodeLimitRatio(vm["lr"].as<double>());
 		ecbs.setRestartTh(vm["rth"].as<int>());
 

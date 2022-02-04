@@ -169,7 +169,6 @@ public:
 	int getminFVal(int agent) const { return min_f_vals[agent]; }
 	void setRestartTh(int th) {restart_th = th;}
 	void setUseFlex(bool _f) { use_flex = _f; }
-	void setRandomInit(bool _r) {random_init = _r;}
 
 	////////////////////////////////////////////////////////////////////////////////////////////
 	// Runs the algorithm until the problem is solved or time is exhausted 
@@ -246,10 +245,6 @@ protected:
 
 	bool use_flex = false;  // Whether to use FEECBS or EECBS
 	bool restart = false;
-	bool random_init;
-	bool root_replan;
-	bool fmin_ascend;
-	bool conf_ascend;
 
 	// For CLEANUP node slection
 	int restart_th;
