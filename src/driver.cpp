@@ -37,6 +37,7 @@ int main(int argc, char** argv)
 		("inadmissibleH", po::value<string>()->default_value("Global"), "inadmissible heuristics (Zero, Global, Path, Local, Conflict)")  // ECBS: Zero
 		("suboptimality", po::value<double>()->default_value(1.2), "suboptimality bound")
 		("flex", po::value<bool>()->default_value(false), "Set true to use flex distribution")
+		("fr", po::value<bool>()->default_value(false), "Set true to use flex restriction or not")
 		("rth", po::value<int>()->default_value(INT_MAX), "Threshold of when to restart FEECBS after visiting certain number of nodes from CLEANUP")
 
 		// params for CBS improvement
@@ -161,6 +162,7 @@ int main(int argc, char** argv)
         ecbs.setSavingStats(vm["stats"].as<bool>());
         ecbs.setHighLevelSolver(s, vm["suboptimality"].as<double>());
 		ecbs.setUseFlex(vm["flex"].as<bool>());
+		ecbs.setUseFlexRestriction(vm["fr"].as<bool>());
 		ecbs.setLLNodeLimitRatio(vm["lr"].as<double>());
 		ecbs.setRestartTh(vm["rth"].as<int>());
 

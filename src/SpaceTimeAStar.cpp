@@ -29,8 +29,10 @@ pair<Path, int> SpaceTimeAStar::findSuboptimalPath(const HLNode& node, const Con
 	const vector<Path*>& paths, int agent, int lowerbound, double w, int other_sum_lb, int other_sum_cost,
 	int outer_sum_lb, double single_flex, int hl_h_val)
 {
+	// Initialize varibales
 	this->w = w;
 	this->use_focal = true;
+	this->num_nodes_focal = 0;
 	Path path;
 	num_expanded = 0;
 	num_generated = 0;
@@ -58,6 +60,7 @@ pair<Path, int> SpaceTimeAStar::findSuboptimalPath(const HLNode& node, const Con
 	num_generated++;
 	start->open_handle = open_list.push(start);
 	start->focal_handle = focal_list.push(start);
+	num_nodes_focal ++;
 	start->in_openlist = true;
 	allNodes_table.insert(start);
 	min_f_val = (int) start->getFVal();
@@ -158,7 +161,10 @@ pair<Path, int> SpaceTimeAStar::findSuboptimalPath(const HLNode& node, const Con
 					if (update_open)
 						open_list.increase(existing_next->open_handle);  // increase because f-val improved
 					if (add_to_focal)
+					{
 						existing_next->focal_handle = focal_list.push(existing_next);
+						num_nodes_focal ++;
+					}
 					if (update_in_focal)
 						focal_list.update(existing_next->focal_handle);  // should we do update? yes, because number of conflicts may go up or down			
 				}
@@ -259,9 +265,14 @@ inline void SpaceTimeAStar::pushNode(AStarNode* node)
 
 	assert(nl_ratio >= 0);
 	if (num_generated > nl_ratio*node_limit && w > 1 && upperbound > w * min_f_val)
+	{
 		use_focal = false;
+	}
 	else if (node->getFVal() <= upperbound)
-		node->focal_handle = focal_list.push(node);		
+	{
+		node->focal_handle = focal_list.push(node);
+		num_nodes_focal ++;
+	}
 }
 
 
@@ -280,7 +291,10 @@ void SpaceTimeAStar::updateFocalList(int lowerbound, int other_sum_lb, int other
 			for (auto n : open_list)
 			{
 				if (n->getFVal() >  upperbound && n->getFVal() <= new_upper_bound)
+				{
 					n->focal_handle = focal_list.push(n);
+					num_nodes_focal ++;
+				}
 			}
 		}
 		min_f_val = new_min_f_val;

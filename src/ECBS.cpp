@@ -423,9 +423,16 @@ bool ECBS::generateRoot()
 		root->makespan = max(root->makespan, paths[ag]->size() - 1);
 		root->g_val += min_f_vals[ag];
 		root->sum_of_costs += (int)paths[ag]->size() - 1;
+		root->ag_ll_node[ag] = search_engines[ag]->num_generated;
+
 		num_LL_expanded += search_engines[ag]->num_expanded;
 		num_LL_generated += search_engines[ag]->num_generated;
-		root->ag_ll_node[ag] = search_engines[ag]->num_generated;
+		num_LL_in_focal += search_engines[ag]->num_nodes_focal;
+		num_findPathForSingleAgent ++;
+		if (search_engines[ag]->use_focal)
+			num_use_LL_focal ++;
+		else
+			num_use_LL_AStar ++;
 	}
 
 	root->h_val = 0;
@@ -490,45 +497,49 @@ bool ECBS::findPathForSingleAgent(ECBSNode*  node, int ag)
 
 		search_engines[ag]->setNodeLimit(node->ag_ll_node[ag]);  // Set limit to LL generated node
 
-		// // Without flex restriction
-		// new_path = search_engines[ag]->findSuboptimalPath(*node, initial_constraints[ag], paths, ag, min_f_vals[ag],
-		// 	suboptimality, other_sum_lb, other_sum_cost, init_sum_lb, flex, node->h_val);
-
-		// Flex restriction
-		bool not_use_flex;
-		if (node == dummy_start || node->parent == dummy_start)
+		if (use_flex_restriction)
 		{
-			not_use_flex = true;
+			// Flex restriction
+			bool not_use_flex;
+			if (node == dummy_start || node->parent == dummy_start)
+			{
+				not_use_flex = true;
+			}
+			else
+			{
+				not_use_flex = node->parent->chosen_from == "cleanup" || 
+					node->parent->conflict->priority == conflict_priority::CARDINAL; //|| 
+					// node->parent->g_val < node->g_val;
+			}
+
+			if (suboptimality* (double) other_sum_lb - (double) other_sum_cost >= 0 && not_use_flex)
+			{
+				// Not use flex if the CT node is from cleanup or the conflict is cardinal
+				new_path = search_engines[ag]->findSuboptimalPath(*node, initial_constraints[ag], paths, ag, min_f_vals[ag], suboptimality);
+
+				num_not_use_flex ++;
+				node->use_flex = false;
+				if (not_use_flex)
+					node->cannot_use_flex = true;
+			}
+
+			else
+			{
+				new_path = search_engines[ag]->findSuboptimalPath(*node, initial_constraints[ag], paths, ag, min_f_vals[ag],
+					suboptimality, other_sum_lb, other_sum_cost, init_sum_lb, flex, node->h_val);
+
+				num_use_flex ++;
+				node->use_flex = true;
+				if (suboptimality* (double) other_sum_lb - (double) other_sum_cost < 0)
+					node->no_more_flex = true;
+			}
+			// End Flex restrictions
 		}
-		else
+		else  // Without flex restriction
 		{
-			not_use_flex = node->parent->chosen_from == "cleanup" || 
-				node->parent->conflict->priority == conflict_priority::CARDINAL; //|| 
-				// node->parent->g_val < node->g_val;
+			new_path = search_engines[ag]->findSuboptimalPath(*node, initial_constraints[ag], paths, ag,
+				min_f_vals[ag], suboptimality, other_sum_lb, other_sum_cost, init_sum_lb, flex, node->h_val);	
 		}
-
-		if (suboptimality* (double) other_sum_lb - (double) other_sum_cost >= 0 && not_use_flex)
-		{
-			// Not use flex if the CT node is from cleanup or the conflict is cardinal
-			new_path = search_engines[ag]->findSuboptimalPath(*node, initial_constraints[ag], paths, ag, min_f_vals[ag], suboptimality);
-
-			num_not_use_flex ++;
-			node->use_flex = false;
-			if (not_use_flex)
-				node->cannot_use_flex = true;
-		}
-
-		else
-		{
-			new_path = search_engines[ag]->findSuboptimalPath(*node, initial_constraints[ag], paths, ag, min_f_vals[ag],
-				suboptimality, other_sum_lb, other_sum_cost, init_sum_lb, flex, node->h_val);
-
-			num_use_flex ++;
-			node->use_flex = true;
-			if (suboptimality* (double) other_sum_lb - (double) other_sum_cost < 0)
-				node->no_more_flex = true;
-		}
-		// End Flex restrictions
 	}
 	else
 	{
@@ -545,7 +556,7 @@ bool ECBS::findPathForSingleAgent(ECBSNode*  node, int ag)
 	node->ag_ll_node[ag] = search_engines[ag]->num_generated;  // update the node limit
 	num_LL_expanded += search_engines[ag]->num_expanded;
 	num_LL_generated += search_engines[ag]->num_generated;
-
+	num_LL_in_focal += search_engines[ag]->num_nodes_focal;
 	num_findPathForSingleAgent ++;
 	if (search_engines[ag]->use_focal)
 		num_use_LL_focal ++;

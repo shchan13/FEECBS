@@ -1020,7 +1020,7 @@ void CBS::saveResults(const string &fileName, const string &instanceName) const
 			"runtime of path finding,runtime of generating child nodes," <<
 			"preprocessing runtime,solver name,instance name,#pushFOCAL," <<
 			"#use pri,#use_type,#use second pri,#use increased flex,#use increased lb,#use reduced conf,#use count,#tie,#has seen conf,restart_cnt,restart_th," <<
-			"#use_LL_AStar,#use_LL_focal,#not_use_flex,#use_flex,#findPathForSingleAgent" << endl;
+			"#use_LL_AStar,#use_LL_focal,#not_use_flex,#use_flex,#findPathForSingleAgent,#low-level in focal" << endl;
 		addHeads.close();
 	}
 	ofstream stats(fileName, std::ios::app);
@@ -1055,7 +1055,7 @@ void CBS::saveResults(const string &fileName, const string &instanceName) const
 		runtime_preprocessing << "," << getSolverName() << "," << instanceName << "," << num_push_focal << "," <<
 		num_use_priority << "," << num_use_type << "," << num_use_second_priority << "," << num_use_increased_flex << "," << 
 		num_use_increased_lb << "," << num_use_reduced_conflicts << "," << num_use_count << "," << num_tie << "," << num_has_seen_conf << "," << restart_cnt << "," << restart_th << "," <<
-		num_use_LL_AStar << "," << num_use_LL_focal << "," << num_not_use_flex << "," << num_use_flex << "," << num_findPathForSingleAgent << endl;
+		num_use_LL_AStar << "," << num_use_LL_focal << "," << num_not_use_flex << "," << num_use_flex << "," << num_findPathForSingleAgent << "," << num_LL_in_focal << endl;
 	stats.close();
 }
 

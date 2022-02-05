@@ -83,6 +83,7 @@ class SingleAgentSolver
 public:
 	uint64_t num_expanded = 0;
 	uint64_t num_generated = 0;
+	uint64_t num_nodes_focal = 0;  // Record how many nodes being added to the focal list
 
 	double runtime_build_CT = 0; // runtimr of building constraint table
 	double runtime_build_CAT = 0; // runtime of building conflict avoidance table

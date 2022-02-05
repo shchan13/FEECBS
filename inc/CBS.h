@@ -39,6 +39,7 @@ public:
 	uint64_t num_HL_generated = 0;
 	uint64_t num_LL_expanded = 0;
 	uint64_t num_LL_generated = 0;
+	uint64_t num_LL_in_focal = 0;
 
 	uint64_t solver_counter;
 	uint64_t solver_num_HL_expanded = 0;
@@ -169,6 +170,7 @@ public:
 	int getminFVal(int agent) const { return min_f_vals[agent]; }
 	void setRestartTh(int th) {restart_th = th;}
 	void setUseFlex(bool _f) { use_flex = _f; }
+	void setUseFlexRestriction(bool _f) {use_flex_restriction = _f;}
 
 	////////////////////////////////////////////////////////////////////////////////////////////
 	// Runs the algorithm until the problem is solved or time is exhausted 
@@ -244,6 +246,7 @@ protected:
 	vector<int> init_min_f_vals; // lower bounds of the cost of the shortest path at the root CT node
 
 	bool use_flex = false;  // Whether to use FEECBS or EECBS
+	bool use_flex_restriction = false;  // Whether to use flex restriction
 	bool restart = false;
 
 	// For CLEANUP node slection
