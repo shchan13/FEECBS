@@ -25,6 +25,8 @@ Then, you are able to run the code:
 - t: the runtime limit
 - suboptimality: the suboptimality factor w
 - flex: whether to use flex (*bool*, default: false)
+- rth: Restart threshold ($T_N$) (*int*, default: INT_MAX)
+- lr: Low-level node ratio ($T_i$) (*int*, default: INT_MAX)
 
 You can find more details and explanations for all parameters with:
 ```

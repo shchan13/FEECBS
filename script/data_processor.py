@@ -257,7 +257,7 @@ class DataProcessor:
         in_axs.axes.set_yticklabels(y_list, fontsize=self.text_size)
         in_axs.set_ylabel(self.y_labels[y_index], fontsize=self.text_size)
 
-    
+
     def get_sum_along_w(self, y_index:str='succ'):
         result = self.get_val('w', y_index)
         tmp_sum = dict()
@@ -275,7 +275,7 @@ class DataProcessor:
     def plot_fig(self, x_index:str='num', y_index:str='succ'):
         # Get the result from the experiments
         result = self.get_val(x_index, y_index)
-                    
+
         # Plot all the subplots on the figure
         fig, axs = plt.subplots(nrows=self.fig_axs[len(self.config['maps'])][0],
                                 ncols=self.fig_axs[len(self.config['maps'])][1],
@@ -284,7 +284,7 @@ class DataProcessor:
 
         for idx, _map_ in enumerate(self.config['maps']):
             frow, fcol = self.get_subfig_pos(idx)
-            if frow == -1:
+            if self.fig_axs[len(self.config['maps'])][0] == 1:
                 self.subplot_fig(x_index, y_index, axs[fcol], idx, _map_, result)
             else:
                 self.subplot_fig(x_index, y_index, axs[frow,fcol], idx, _map_, result)
@@ -309,9 +309,9 @@ if __name__ == '__main__':
     # Create data processor
     data_processor = DataProcessor(args.config)
     # data_processor.plot_fig()
-    # data_processor.plot_fig(x_index='num', y_index='succ')
+    data_processor.plot_fig(x_index='num', y_index='succ')
     # data_processor.plot_fig(x_index='w', y_index='succ')
-    data_processor.get_sum_along_w()
+    # data_processor.get_sum_along_w()
     # data_processor.plot_fig(x_index='w', y_index='min f value')
     # data_processor.plot_fig(x_index='ins', y_index='solution cost')
     # data_processor.plot_fig(x_index='w', y_index='runtime')
