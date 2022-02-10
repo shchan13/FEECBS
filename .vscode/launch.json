@@ -18,8 +18,10 @@
                 // "-a/home/rdaneel/mapf_benchmark/scen-even/brc202d-even-13.scen",
                 // "-m/home/rdaneel/mapf_benchmark/mapf-map/empty-32-32.map",
                 // "-a/home/rdaneel/mapf_benchmark/scen-even/empty-32-32-even-1.scen",
-                "-m/home/rdaneel/mapf_benchmark/mapf-map/maze-32-32-2.map",
-                "-a/home/rdaneel/mapf_benchmark/scen-random/maze-32-32-2-random-4.scen",
+                // "-m/home/rdaneel/mapf_benchmark/mapf-map/maze-32-32-2.map",
+                // "-a/home/rdaneel/mapf_benchmark/scen-even/maze-32-32-2-even-17.scen",
+                "-m/home/rdaneel/mapf_benchmark/mapf-map/room-32-32-4.map",
+                "-a/home/rdaneel/mapf_benchmark/scen-even/room-32-32-4-even-8.scen",
                 // "-m/home/rdaneel/mapf_benchmark/mapf-map/random-32-32-20.map",
                 // "-a/home/rdaneel/mapf_benchmark/scen-random/random-32-32-20-random-5.scen", 
                 // "-m/home/rdaneel/mapf_benchmark/mapf-map/den520d.map", 
@@ -28,11 +30,11 @@
                 // "-a/home/rdaneel/mapf_benchmark/scen-even/warehouse-20-40-10-2-1-even-25.scen", 
                 "-o${workspaceFolder}/result_debug.csv", 
                 "--saveCT", "true",
-                "-k20",
-                "-t60",
+                "--suboptimality","1.05",
+                "-k40",
+                "-t2",
                 "-s1",
                 "--highLevelSolver", "EES",
-                "--suboptimality","1.02",
                 "--heuristics", "WDG",
                 "--prioritizingConflicts", "true",
                 "--bypass", "true",
@@ -40,9 +42,9 @@
                 "--corridorReasoning", "true",
                 "--targetReasoning", "true",
                 "--flex", "true",
-                "--fr", "true", // Whether to use flex restrictions
+                // "--fr", "true", // Whether to use flex restrictions
                 // "--rth", "50",  // Threshold of when to restart FEECBS with EECBS after continuously visiting certain number of nodes from CLEANUP
-                // "--lr", "100"
+                // "--lr", "40"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

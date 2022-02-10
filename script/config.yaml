@@ -1,7 +1,7 @@
 exp_path: "/home/rdaneel/exp_aaai/"
 ins_num: 25
 time_limit: 60
-plot_ci: false
+plot_ci: true
 
 f_weights:
   - 1.01
@@ -10,38 +10,38 @@ f_weights:
   - 1.10
 
 maps:
-  # - name: Berlin_1_256
-  #   label: city
-  #   scens:
-  #     - even
-  #     - random
-  #   num_of_agents:
-  #     - 200
-  #     - 400
-  #     - 600
-  #     - 800
+  - name: Berlin_1_256
+    label: city
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 200
+      - 400
+      - 600
+      - 800
 
-  # - name: den520d
-  #   label: den520d
-  #   scens:
-  #     - even
-  #     - random
-  #   num_of_agents:
-  #     - 200
-  #     - 400
-  #     - 600
-  #     - 800
+  - name: den520d
+    label: den520d
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 200
+      - 400
+      - 600
+      - 800
 
-  # - name: brc202d
-  #   label: brc202d
-  #   scens:
-  #     - even
-  #     - random
-  #   num_of_agents:
-  #     - 200
-  #     - 400
-  #     - 600
-  #     - 800
+  - name: brc202d
+    label: brc202d
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 200
+      - 400
+      - 600
+      - 800
 
   - name: warehouse-20-40-10-2-1
     label: warehouse
@@ -54,29 +54,29 @@ maps:
       - 600
       - 800
 
-  # - name: maze-32-32-2
-  #   label: maze
-  #   scens:
-  #     - even
-  #     - random
-  #   num_of_agents:
-  #     - 10
-  #     - 20
-  #     - 30
-  #     - 40
-  #     - 50
+  - name: maze-32-32-2
+    label: maze
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 10
+      - 20
+      - 30
+      - 40
+      - 50
 
-  # - name: room-32-32-4
-  #   label: room
-  #   scens:
-  #     - even
-  #     - random
-  #   num_of_agents:
-  #     - 10
-  #     - 20
-  #     - 30
-  #     - 40
-  #     - 50
+  - name: room-32-32-4
+    label: room
+    scens:
+      - even
+      - random
+    num_of_agents:
+      - 10
+      - 20
+      - 30
+      - 40
+      - 50
 
   - name: random-32-32-20
     label: random
@@ -103,119 +103,56 @@ maps:
       - 500
 
 solvers:
-  # - name: EECBS0
-  #   label: 'EECBS+'
-  #   color: 'grey'
-  #   marker: '+'
-  #   w: 1.02
-  #   mtth: -1
-  #   T_N: -1
-  #   T_i: -1
-  
-  # - name: EECBS1
-  #   label: 'EECBS+ FA*(10)'
-  #   color: 'yellow'
-  #   marker: '|'
-  #   w: 1.02
-  #   mtth: -1
-  #   T_N: -1
-  #   T_i: -1
-  
-  # - name: EECBS2
-  #   label: 'EECBS+ FA*(20)'
-  #   color: 'pink'
-  #   marker: '>'
-  #   w: 1.02
-  #   mtth: -1
-  #   T_N: -1
-  #   T_i: -1
+  - name: EECBS0
+    label: 'EECBS+'
+    color: 'grey'
+    marker: 'P'
+    w: 1.02
+    mtth: -1
+    T_N: -1
+    T_i: -1
 
-  # - name: FEECBS0
-  #   label: 'FEECBS+'
-  #   color: 'deepskyblue'
-  #   marker: 'o'
-  #   w: 1.02
-  #   mth: -1
-  #   T_N: -1
-  #   T_i: -1
+  - name: EECBS3
+    label: 'EECBS+ (FA*:30)'
+    color: 'green'
+    marker: 's'
+    w: 1.02
+    mtth: -1
+    T_N: -1
+    T_i: 30  
 
-  - name: FEECBS1
-    label: 'FEECBS+ w/o BP'
+  - name: FEECBS0
+    label: 'FEECBS+'
+    color: 'deepskyblue'
+    marker: 'o'
+    w: 1.02
+    mtth: -1
+    T_N: -1
+    T_i: -1
+  
+  - name: FEECBS3
+    label: 'FEECBS+ (FR:50)'
     color: 'purple'
     marker: '>'
     w: 1.02
-    mth: -1
-    T_N: -1
-    T_i: -1 
+    mtth: -1
+    T_N: 50
+    T_i: -1
 
-  - name: FEECBS2
-    label: 'FEECBS+ FR(10)'
-    color: 'yellow'
-    marker: '|'
+  - name: FEECBS8
+    label: 'FEECBS+ (FA*:30)'
+    color: 'gold'
+    marker: '*'
     w: 1.02
-    mth: -1
-    T_N: 10
-    T_i: -1 
-
-  # - name: FEECBS3
-  #   label: 'FEECBS+ FR(50)'
-  #   color: 'orange'
-  #   marker: '>'
-  #   w: 1.02
-  #   mth: -1
-  #   T_N: 50
-  #   T_i: -1
-
-  # - name: FEECBS4
-  #   label: 'FEECBS+ FR(75)'
-  #   color: 'red'
-  #   marker: '*'
-  #   w: 1.02
-  #   mth: -1
-  #   T_N: 75
-  #   T_i: -1
-
-  # - name: FEECBS5
-  #   label: 'FEECBS+ FR(100)'
-  #   color: 'pink'
-  #   marker: '>'
-  #   w: 1.02
-  #   mth: -1
-  #   T_N: 100
-  #   T_i: -1 
- 
-  # - name: FEECBS6
-  #   label: 'FEECBS+ FA*(10)'
-  #   color: 'gold'
-  #   marker: '|'
-  #   w: 1.02
-  #   mth: -1
-  #   T_N: -1
-  #   T_i: 10
-
-  # - name: FEECBS7
-  #   label: 'FEECBS+ FA*(20)'
-  #   color: 'orange'
-  #   marker: '>'
-  #   w: 1.02
-  #   mth: -1
-  #   T_N: -1
-  #   T_i: 20
-
-  # - name: FEECBS8
-  #   label: 'FEECBS+ FA*(30)'
-  #   color: 'red'
-  #   marker: '*'
-  #   w: 1.02
-  #   mth: -1
-  #   T_N: -1
-  #   T_i: 30
-
-  # - name: FEECBS9
-  #   label: 'FEECBS+ FA*(40)'
-  #   color: 'pink'
-  #   marker: '^'
-  #   w: 1.02
-  #   mth: -1
-  #   T_N: -1
-  #   T_i: 40
+    mtth: -1
+    T_N: 50
+    T_i: -1
+  
+  - name: FEECBS13
+    label: 'FEECBS+ (FR:50,FA*:40)'
+    color: 'red'
+    marker: '^'
+    w: 1.02
+    mtth: -1
+    T_N: 50
+    T_i: 40

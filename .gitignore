@@ -5,8 +5,13 @@ result_debug.csv
 togo_data*
 iteration_data*
 result_debug.csv
-config
+script/config_backup.yaml
+script/config2.yaml
+script/config3.yaml
 nodes_in_list*
 *.mp4
 *.png
 run
+*.pdf
+*.tree
+*.ps
