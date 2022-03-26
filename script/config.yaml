@@ -2,6 +2,10 @@ exp_path: "/home/rdaneel/exp_aaai/"
 ins_num: 25
 time_limit: 60
 plot_ci: true
+plot_std: false
+set_title: true
+set_legend: true
+set_shift: false
 
 f_weights:
   - 1.01
@@ -106,8 +110,8 @@ solvers:
   - name: EECBS0
     label: 'EECBS+'
     color: 'grey'
-    marker: 'P'
-    w: 1.02
+    marker: 'o'
+    w: 1.01
     mtth: -1
     T_N: -1
     T_i: -1
@@ -116,16 +120,16 @@ solvers:
     label: 'EECBS+ (FA*:30)'
     color: 'green'
     marker: 's'
-    w: 1.02
+    w: 1.01
     mtth: -1
     T_N: -1
-    T_i: 30  
+    T_i: 30
 
   - name: FEECBS0
     label: 'FEECBS+'
     color: 'deepskyblue'
-    marker: 'o'
-    w: 1.02
+    marker: 'P'
+    w: 1.01
     mtth: -1
     T_N: -1
     T_i: -1
@@ -134,25 +138,25 @@ solvers:
     label: 'FEECBS+ (FR:50)'
     color: 'purple'
     marker: '>'
-    w: 1.02
+    w: 1.01
     mtth: -1
     T_N: 50
     T_i: -1
 
-  - name: FEECBS8
-    label: 'FEECBS+ (FA*:30)'
-    color: 'gold'
+  - name: FEECBS9
+    label: 'FEECBS+ (FA*:40)'
+    color: 'orange'
     marker: '*'
-    w: 1.02
+    w: 1.01
     mtth: -1
-    T_N: 50
-    T_i: -1
-  
+    T_N: -1
+    T_i: 40
+
   - name: FEECBS13
     label: 'FEECBS+ (FR:50,FA*:40)'
     color: 'red'
     marker: '^'
-    w: 1.02
+    w: 1.01
     mtth: -1
     T_N: 50
     T_i: 40

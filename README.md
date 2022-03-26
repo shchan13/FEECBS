@@ -6,7 +6,8 @@ Explicit Estimation Conflict-Based Search (EECBS) is an effifent bounded-subopti
 ## How to Run the Code
 The code requires the external library BOOST (https://www.boost.org/). After you installed BOOST and downloaded the source code, go into the directory of the source code and compile it with CMake: 
 ```
-cmake .
+mkdir build && cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
 make
 ```
 
@@ -14,7 +15,7 @@ You also need to download the MAPF instances from the MAPF benchmark (https://mo
 
 Then, you are able to run the code:
 ```
-./eecbs -m random-32-32-20.map -a random-32-32-20-random-1.scen -o test.csv --outputPaths=paths.txt -k 50 -t 60 --suboptimality=1.2 --flex false
+./feecbs -m random-32-32-20.map -a random-32-32-20-random-1.scen -o test.csv --outputPaths=paths.txt -k 50 -t 60 --suboptimality=1.2 --flex false
 ```
 
 - m: the map file from the MAPF benchmark
@@ -25,16 +26,16 @@ Then, you are able to run the code:
 - t: the runtime limit
 - suboptimality: the suboptimality factor w
 - flex: whether to use flex (*bool*, default: false)
-- rth: Restart threshold ($T_N$) (*int*, default: INT_MAX)
-- lr: Low-level node ratio ($T_i$) (*int*, default: INT_MAX)
+- rth: restart threshold ($T_N$) (*int*, default: INT_MAX)
+- lr: low-level node ratio ($T_i$) (*int*, default: INT_MAX)
 
 You can find more details and explanations for all parameters with:
 ```
-./eecbs --help
+./feecbs --help
 ```
 
 ## License
-EECBS is released under USC – Research License. See license.md for further details.
+FEECBS is released under USC – Research License. See license.md for further details.
  
 ## References
 [1] Jiaoyang Li, Wheeler Ruml and Sven Koenig.

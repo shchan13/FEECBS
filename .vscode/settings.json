@@ -65,7 +65,11 @@
         "map": "cpp",
         "memory_resource": "cpp",
         "set": "cpp",
-        "*.txx": "cpp"
+        "*.txx": "cpp",
+        "bit": "cpp",
+        "condition_variable": "cpp",
+        "mutex": "cpp",
+        "variant": "cpp"
     },
     "autoDocstring.docstringFormat": "google",
     "editor.snippetSuggestions": "top",
