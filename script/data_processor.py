@@ -30,7 +30,7 @@ class DataProcessor:
         self.cap_size = 2.0
         self.cap_thick = 2.0
         self.shift = 0.1
-        self.text_size:int = 30
+        self.text_size:int = 35
         self.fig_axs:Dict[int, Tuple[int,int]] = {1: (1,1),
                                                   2: (1,2),
                                                   3: (1,3),
