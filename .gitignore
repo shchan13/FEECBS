@@ -8,6 +8,7 @@ result_debug.csv
 script/config_backup.yaml
 script/config2.yaml
 script/config3.yaml
+script/__pycache__
 nodes_in_list*
 *.mp4
 *.png

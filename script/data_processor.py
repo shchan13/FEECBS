@@ -2,17 +2,16 @@
 # -*- coding: UTF-8 -*-
 """Data processor"""
 
-import enum
 import os
 import argparse
 from typing import Dict, List, Tuple
 import pprint
+import logging
 from sqlalchemy import false, true
 import yaml
 import matplotlib.pyplot as plt
 import util
 import numpy as np
-import logging
 
 class DataProcessor:
     def __init__(self, in_config) -> None:
