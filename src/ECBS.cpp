@@ -28,21 +28,8 @@ bool ECBS::solve(double time_limit, int _cost_lowerbound, int _cost_upperbound)
 		auto cleanup_head = cleanup_list.top();
 		cleanup_head_lb = cleanup_list.top()->g_val;
 		if (screen > 3)
-		{
-			open_node_idx->push_back(cleanup_head->time_generated);
-			open_sum_lb->push_back(cleanup_head_lb);
-			open_sum_fval->push_back(cleanup_head->getFVal());
-			open_sum_cost->push_back(cleanup_head->sum_of_costs);
-			open_num_conflicts->push_back(cleanup_head->conflicts.size() + cleanup_head->unknownConf.size());
-			open_remained_flex->push_back(suboptimality * cleanup_head_lb - cleanup_head->sum_of_costs);
-			
-			if (screen == 5)  // Check the number of CT nodes in FOCAL, OPEN, and CLEANUP
-			{
-				iter_num_focal->push_back(focal_list.size());
-				iter_num_open->push_back(open_list.size());
-				iter_num_cleanup->push_back(cleanup_list.size());
-			}
-		}
+			iter_tracker.getCleanupHeadStats(cleanup_head,
+				focal_list.size(), open_list.size(), cleanup_list.size());
 		// End debug
 
 		auto curr = selectNode();  // update focal list and select the CT node
@@ -52,35 +39,7 @@ bool ECBS::solve(double time_limit, int _cost_lowerbound, int _cost_upperbound)
 		assert((double) curr->sum_of_costs <= suboptimality * cleanup_head->getFVal());
 
 		if (screen > 3)
-		{
-			iter_node_idx->push_back(curr->time_generated);
-			iter_sum_lb->push_back(curr->g_val);
-			iter_sum_fval->push_back(curr->getFVal());
-			iter_sum_cost->push_back(curr->sum_of_costs);
-			iter_num_conflicts->push_back(curr->conflicts.size() + curr->unknownConf.size());
-			iter_remained_flex->push_back(suboptimality * curr->g_val - curr->sum_of_costs);
-			iter_subopt->push_back((double) curr->sum_of_costs / (double) cleanup_head_lb);
-			iter_sum_ll_generate->push_back(curr->ll_generated);
-
-			for (int ag = 0; ag < num_of_agents; ag++)
-			{
-				iter_ag_lb->at(ag).push_back(min_f_vals[ag]);
-				iter_ag_cost->at(ag).push_back(paths[ag]->size()-1);
-			}
-			
-			if (screen == 5)  // Debug
-			{
-				iter_use_flex->push_back(curr->use_flex);
-				iter_no_more_flex->push_back(curr->no_more_flex);
-				iter_cannot_use_flex->push_back(curr->cannot_use_flex);
-				if (curr->chosen_from == "cleanup")
-					iter_node_type->push_back(0);
-				else if (curr->chosen_from == "open")
-					iter_node_type->push_back(1);
-				else if (curr->chosen_from == "focal")
-					iter_node_type->push_back(2);
-			}
-		}
+			iter_tracker.getIterStats(curr, cleanup_head_lb, min_f_vals, paths);
 		// End debug
 
 		if (terminate(curr))
@@ -194,9 +153,7 @@ bool ECBS::solve(double time_limit, int _cost_lowerbound, int _cost_upperbound)
 				if (foundBypass)
 				{
 					for (auto & i : child)
-					{
 						delete i;
-					}
                     classifyConflicts(*curr); // classify the new-detected conflicts
 				}
 
@@ -209,20 +166,9 @@ bool ECBS::solve(double time_limit, int _cost_lowerbound, int _cost_upperbound)
 							pushNode(child[i]);
 							curr->children.push_back(child[i]);
 							if (screen > 1)
-							{
 								cout << "		Generate " << *child[i] << endl;
-							}
 							if (screen > 3)
-							{
-								all_node_idx->push_back(child[i]->time_generated);
-								all_sum_lb->push_back(child[i]->g_val);
-								all_sum_fval->push_back(child[i]->getFVal());
-								all_sum_cost->push_back(child[i]->sum_of_costs);
-								all_num_conflicts->push_back(child[i]->conflicts.size() + child[i]->unknownConf.size());
-								all_remained_flex->push_back(suboptimality * child[i]->getFVal() - child[i]->sum_of_costs);
-								all_subopt->push_back((double) child[i]->sum_of_costs / (double) child[i]->getFVal());
-								all_sum_ll_generate->push_back(child[i]->ll_generated);
-							}
+								iter_tracker.getAllStats(child[i]);
 						}
 					}
 				}
@@ -259,16 +205,7 @@ bool ECBS::solve(double time_limit, int _cost_lowerbound, int _cost_upperbound)
 				if (screen > 1)
 					cout << "		Generate " << *child[i] << endl;
 				if (screen > 3)
-				{
-					all_node_idx->push_back(child[i]->time_generated);
-					all_sum_lb->push_back(child[i]->g_val);
-					all_sum_fval->push_back(child[i]->getFVal());
-					all_sum_cost->push_back(child[i]->sum_of_costs);
-					all_num_conflicts->push_back(child[i]->conflicts.size() + child[i]->unknownConf.size());
-					all_remained_flex->push_back(suboptimality * child[i]->getFVal() - child[i]->sum_of_costs);
-					all_subopt->push_back((double) child[i]->sum_of_costs / (double) child[i]->getFVal());
-					all_sum_ll_generate->push_back(child[i]->ll_generated);
-				}
+					iter_tracker.getAllStats(child[i]);
 			}
 		}
 		switch (curr->conflict->type)
@@ -546,11 +483,13 @@ bool ECBS::findPathForSingleAgent(ECBSNode*  node, int ag)
 		new_path = search_engines[ag]->findSuboptimalPath(*node, initial_constraints[ag], paths, ag, min_f_vals[ag], suboptimality);
 	}
 
-	if (screen > 3)
+	if (screen > 3)  // This is for debugging
 	{
-		replan_flex->push_back(suboptimality * node->g_val - min_f_vals[ag] - (node->sum_of_costs - (int) paths[ag]->size() + 1));
-		replan_ll_generate->push_back(search_engines[ag]->num_generated);  // This is for debugging
-		replan_agent->push_back(ag);
+		double replan_flx = suboptimality * node->g_val - min_f_vals[ag];
+		replan_flx -= (node->sum_of_costs - (int) paths[ag]->size() + 1);
+		iter_tracker.replan_flex.push_back(replan_flx);
+		iter_tracker.replan_ll_generate.push_back(search_engines[ag]->num_generated);
+		iter_tracker.replan_agent.push_back(ag);
 	}
 
 	node->ag_ll_node[ag] = search_engines[ag]->num_generated;  // update the node limit

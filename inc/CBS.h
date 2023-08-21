@@ -3,6 +3,7 @@
 #include "RectangleReasoning.h"
 #include "CorridorReasoning.h"
 #include "MutexReasoning.h"
+#include "IterTracker.h"
 
 enum high_level_solver_type { ASTAR, ASTAREPS, NEW, EES};
 
@@ -56,67 +57,6 @@ public:
 	uint64_t num_use_flex = 0;
 	uint64_t num_findPathForSingleAgent = 0;
 
-	// statistics for branch and every iteration
-	int cleanup_head_lb;
-    std::shared_ptr<vector<int>> iter_sum_lb;
-    std::shared_ptr<vector<int>> br_sum_lb;
-    std::shared_ptr<vector<int>> all_sum_lb;
-    std::shared_ptr<vector<int>> open_sum_lb;
-
-	std::shared_ptr<vector<int>> iter_sum_fval;
-    std::shared_ptr<vector<int>> br_sum_fval;
-    std::shared_ptr<vector<int>> all_sum_fval;
-    std::shared_ptr<vector<int>> open_sum_fval;
-
-    std::shared_ptr<vector<int>> iter_sum_cost;
-    std::shared_ptr<vector<int>> br_sum_cost;
-    std::shared_ptr<vector<int>> all_sum_cost;
-    std::shared_ptr<vector<int>> open_sum_cost;
-    
-    std::shared_ptr<vector<int>> iter_num_conflicts;
-    std::shared_ptr<vector<int>> br_num_conflicts;
-    std::shared_ptr<vector<int>> all_num_conflicts;
-    std::shared_ptr<vector<int>> open_num_conflicts;
-
-    std::shared_ptr<vector<double>> iter_remained_flex;
-    std::shared_ptr<vector<double>> br_remained_flex;
-    std::shared_ptr<vector<double>> all_remained_flex;
-    std::shared_ptr<vector<double>> open_remained_flex;
-
-	std::shared_ptr<vector<double>> iter_subopt;
-    std::shared_ptr<vector<double>> br_subopt;
-    std::shared_ptr<vector<double>> all_subopt;
-
-    std::shared_ptr<vector<uint64_t>> iter_sum_ll_generate;
-    std::shared_ptr<vector<uint64_t>> br_sum_ll_generate;
-    std::shared_ptr<vector<uint64_t>> all_sum_ll_generate;
-	std::shared_ptr<vector<uint64_t>> replan_ll_generate;
-	std::shared_ptr<vector<int>> replan_agent;
-	std::shared_ptr<vector<double>> replan_flex;
-
-    std::shared_ptr<vector<int>> iter_node_idx;
-    std::shared_ptr<vector<int>> br_node_idx;
-    std::shared_ptr<vector<int>> open_node_idx;
-    std::shared_ptr<vector<int>> all_node_idx;
-
-	std::shared_ptr<vector<uint64_t>> iter_num_focal;
-	std::shared_ptr<vector<uint64_t>> iter_num_open;
-	std::shared_ptr<vector<uint64_t>> iter_num_cleanup;
-	std::shared_ptr<vector<int>> iter_node_type;
-
-	std::shared_ptr<vector<bool>> iter_use_flex;
-	std::shared_ptr<vector<bool>> iter_no_more_flex;
-	std::shared_ptr<vector<bool>> iter_cannot_use_flex;
-
-	std::shared_ptr<vector<vector<int>>> iter_ag_lb;
-	std::shared_ptr<vector<vector<int>>> br_ag_lb;
-
-	std::shared_ptr<vector<vector<int>>> iter_ag_cost;
-	std::shared_ptr<vector<vector<int>>> br_ag_cost;
-	// end of statistics for branch and every iteration
-
-	// CBSNode* dummy_start = nullptr;
-	// CBSNode* goal_node = nullptr;
 	HLNode* dummy_start = nullptr;
 	HLNode* goal_node = nullptr;
 
@@ -226,6 +166,7 @@ protected:
 	int inadmissible_cost_lowerbound;
 	int node_limit = MAX_NODES;
 	int cost_upperbound = MAX_COST;
+	int cleanup_head_lb;  // lower bound of the top node in CLEANUP
 
 	vector<ConstraintTable> initial_constraints;
 	clock_t start;
@@ -296,9 +237,11 @@ protected:
 	bool terminate(HLNode* curr); // check the stop condition and return true if it meets
 	void computeConflictPriority(shared_ptr<Conflict>& con, CBSNode& node); // check the conflict is cardinal, semi-cardinal or non-cardinal
 
-	void getBranchEval(HLNode* __node__, int open_head_lb);
-	void saveEval(void);
-	void saveNumNodesInLists(void);
+	IterTracker iter_tracker;
+
+	// void getBranchEval(HLNode* __node__, int open_head_lb);
+	// void saveEval(void);
+	// void saveNumNodesInLists(void);
 
 private: // CBS only, cannot be used by ECBS
 	vector<Path> paths_found_initially;  // contain initial paths found

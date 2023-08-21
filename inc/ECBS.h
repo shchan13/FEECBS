@@ -6,69 +6,9 @@
 class ECBS : public CBS
 {
 public:
-	ECBS(const Instance& instance, bool sipp, int screen) : CBS(instance, sipp, screen) {	
-		if (screen > 3)
-		{
-			// Initialize for agents analysis
-			iter_sum_lb = make_shared<vector<int>>();
-			br_sum_lb = make_shared<vector<int>>();
-    		all_sum_lb = make_shared<vector<int>>();
-			open_sum_lb = make_shared<vector<int>>();
+	ECBS(const Instance& instance, bool sipp, int screen):
+		CBS(instance, sipp, screen) {}
 
-			iter_sum_fval = make_shared<vector<int>>();
-			br_sum_fval = make_shared<vector<int>>();
-    		all_sum_fval = make_shared<vector<int>>();
-			open_sum_fval = make_shared<vector<int>>();
-
-    		iter_sum_cost = make_shared<vector<int>>();
-    		br_sum_cost = make_shared<vector<int>>();
-    		all_sum_cost = make_shared<vector<int>>();
-    		open_sum_cost = make_shared<vector<int>>();
-    
-			iter_num_conflicts = make_shared<vector<int>>();
-			br_num_conflicts = make_shared<vector<int>>();
-			all_num_conflicts = make_shared<vector<int>>();
-			open_num_conflicts = make_shared<vector<int>>();
-
-			iter_remained_flex = make_shared<vector<double>>();
-			br_remained_flex = make_shared<vector<double>>();
-			all_remained_flex = make_shared<vector<double>>();
-			open_remained_flex = make_shared<vector<double>>();
-
-			iter_subopt = make_shared<vector<double>>();
-			br_subopt = make_shared<vector<double>>();
-			all_subopt = make_shared<vector<double>>();
-
-			iter_sum_ll_generate = make_shared<vector<uint64_t>>();
-			br_sum_ll_generate = make_shared<vector<uint64_t>>();
-			all_sum_ll_generate = make_shared<vector<uint64_t>>();
-			replan_ll_generate = make_shared<vector<uint64_t>>();
-			replan_agent = make_shared<vector<int>>();
-			replan_flex = make_shared<vector<double>>();
-
-			iter_node_idx = make_shared<vector<int>>();
-			br_node_idx = make_shared<vector<int>>();
-			all_node_idx = make_shared<vector<int>>();
-			open_node_idx = make_shared<vector<int>>();
-
-			iter_ag_lb = make_shared<vector<vector<int>>>(num_of_agents);
-			br_ag_lb = make_shared<vector<vector<int>>>(num_of_agents);
-
-			iter_ag_cost = make_shared<vector<vector<int>>>(num_of_agents);
-			br_ag_cost = make_shared<vector<vector<int>>>(num_of_agents);
-		}
-
-		if (screen == 5)
-		{
-			iter_num_focal = make_shared<vector<uint64_t>>();
-			iter_num_open = make_shared<vector<uint64_t>>();
-			iter_num_cleanup = make_shared<vector<uint64_t>>();
-			iter_node_type = make_shared<vector<int>>();
-			iter_use_flex = make_shared<vector<bool>>();
-			iter_no_more_flex = make_shared<vector<bool>>();
-			iter_cannot_use_flex = make_shared<vector<bool>>();
-		}
-	}
 	void setInitialPath(int agent, Path _path) override
 	{ 
 		if (paths_found_initially.empty())
@@ -76,6 +16,7 @@ public:
 		paths_found_initially[agent].first = _path;
 		cout << paths_found_initially[agent].first << endl;
 	}
+
 	void setLLNodeLimitRatio(double lr)
 	{
 		for (int i = 0; i < num_of_agents; i++)
